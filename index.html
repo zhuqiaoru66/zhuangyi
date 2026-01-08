@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>致乖乖 - 爱的粒子特效</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 10; /* 提高背景粒子层级 */
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1; /* 文字容器放到最底层 */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            pointer-events: none; /* 允许点击穿透到特效 */
+        }
+        
+        /* 但按钮需要能点击 */
+        .controls, .btn {
+            pointer-events: auto;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            color: #ff4d6d;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #ff2e63, #ff9a00, #ffea00, #00ff88, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 46, 99, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffafcc;
+            text-shadow: 0 0 20px rgba(255, 175, 204, 0.5);
+        }
+        
+        .heart-icon {
+            color: #ff2e63;
+            font-size: 2rem;
+            margin: 0 10px;
+            animation: heartbeat 1.5s infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 46, 99, 0.7));
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            5% { transform: scale(1.2); }
+            10% { transform: scale(1.1); }
+            15% { transform: scale(1.3); }
+            50% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+        
+        .message-box {
+            background: rgba(0, 0, 0, 0.4); /* 更深的背景让文字可读 */
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            margin: 30px auto;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .message-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff2e63, #ff9a00, #ffea00, #00ff88, #00aaff);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: calc(200px + 100%) 0; }
+        }
+        
+        .message {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            text-align: left;
+            margin-bottom: 20px;
+            text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+        }
+        
+        .signature {
+            text-align: right;
+            font-size: 1.6rem;
+            font-style: italic;
+            color: #ff2e63;
+            font-weight: bold;
+            text-shadow: 0 2px 15px rgba(255, 46, 99, 0.7);
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            position: relative;
+            z-index: 5; /* 按钮需要高一点层级 */
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, rgba(255, 46, 99, 0.8), rgba(255, 77, 109, 0.8));
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 25px rgba(255, 77, 109, 0.5);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.7);
+            background: linear-gradient(45deg, rgba(255, 46, 99, 0.9), rgba(255, 77, 109, 0.9));
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        #fireworksMode {
+            background: linear-gradient(45deg, rgba(255, 107, 0, 0.8), rgba(255, 154, 0, 0.8));
+            box-shadow: 0 5px 25px rgba(255, 107, 0, 0.5);
+        }
+        
+        #fireworksMode:hover {
+            background: linear-gradient(45deg, rgba(255, 107, 0, 0.9), rgba(255, 154, 0, 0.9));
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.7);
+        }
+        
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 100; /* 音乐播放器保持最高 */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .music-info {
+            font-size: 0.9rem;
+            max-width: 200px;
+        }
+        
+        .music-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 1rem;
+            opacity: 0.8;
+            text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+        }
+        
+        .heart-counter {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100; /* 计数器保持最高 */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .fireworks-counter {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100; /* 计数器保持最高 */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .message {
+                font-size: 1.2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .heart-counter, .fireworks-counter {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin: 10px;
+                z-index: 100;
+            }
+        }
+        
+        /* 烟花粒子样式 - 最高层级 */
+        .firework-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 50; /* 烟花粒子在较高层级 */
+        }
+        
+        .sparkle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 50;
+        }
+        
+        .trail {
+            position: fixed;
+            pointer-events: none;
+            z-index: 40; /* 尾迹稍低 */
+        }
+        
+        /* 文字发光效果 */
+        .glow-text {
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        /* 确保按钮可见 */
+        .btn-container {
+            position: relative;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主要内容放在最底层 -->
+    <div class="container">
+        <div class="header">
+            <h1>致我最爱的乖乖 <i class="fas fa-heart heart-icon"></i> 庄依</h1>
+            <div class="subtitle">为你绽放最绚丽的烟花</div>
+        </div>
+        
+        <div class="message-box">
+            <div class="message">
+                <p>亲爱的乖乖：</p>
+                <p>当烟花在夜空中绽放，每一道光芒都是我想你的瞬间。就像这精心设计的烟花效果，每一颗粒子都承载着我对你的思念，每一次爆炸都是心跳的旋律。</p>
+                <p>看那璀璨的烟火，它们在空中画出的轨迹，是我用代码为你写下的情书。红如我炽热的心，金如你灿烂的笑，蓝如我们深情的眼，绿如永恒的希望。</p>
+                <p>每一次烟花的绽放，都是我对你爱的宣言。它们会闪烁、会旋转、会画出心形，就像我对你的爱，永远充满惊喜和浪漫。</p>
+            </div>
+            <div class="signature">永远为你绽放的人</div>
+        </div>
+        
+        <div class="controls btn-container">
+            <button class="btn" id="heartMode">
+                <i class="fas fa-heart"></i> 心形模式
+            </button>
+            <button class="btn" id="rainbowMode">
+                <i class="fas fa-palette"></i> 彩虹模式
+            </button>
+            <button class="btn" id="fireworksMode">
+                <i class="fas fa-fireworks"></i> 高级烟花
+            </button>
+            <button class="btn" id="heartFireworks">
+                <i class="fas fa-heart-broken"></i> 爱心烟花
+            </button>
+            <button class="btn" id="spiralFireworks">
+                <i class="fas fa-sync-alt"></i> 螺旋烟花
+            </button>
+            <button class="btn" id="clearHearts">
+                <i class="fas fa-trash"></i> 清空效果
+            </button>
+        </div>
+        
+        <div class="footer">
+            <p>点击按钮观看效果 | 为你精心制作的高级烟花特效</p>
+        </div>
+    </div>
+    
+    <!-- 粒子容器放在上层 -->
+    <div id="particles-js"></div>
+    
+    <!-- 音乐播放器 -->
+    <div class="music-player">
+        <div class="music-info">浪漫烟花配乐</div>
+        <button class="music-btn" id="playPause">
+            <i class="fas fa-play"></i>
+        </button>
+        <button class="music-btn" id="muteBtn">
+            <i class="fas fa-volume-up"></i>
+        </button>
+    </div>
+    
+    <!-- 计数器 -->
+    <div class="heart-counter">
+        <i class="fas fa-heart" style="color:#ff2e63;"></i>
+        <span id="heartCount">0</span> 颗爱心
+    </div>
+    
+    <div class="fireworks-counter">
+        <i class="fas fa-fireworks" style="color:#ff9a00;"></i>
+        <span id="fireworksCount">0</span> 朵烟花
+    </div>
+
+    <!-- 引入粒子库 -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // 初始化变量
+        let heartCount = 0;
+        let fireworksCount = 0;
+        let audio;
+        let isPlaying = false;
+        let isMuted = false;
+        
+        // 烟花颜色方案
+        const fireworkColors = {
+            romantic: ['#ff2e63', '#ff6b9d', '#ffafcc', '#ffd6ff'],
+            gold: ['#ffd700', '#ffed4e', '#fff9aa', '#ffffcc'],
+            blue: ['#4cc9f0', '#4895ef', '#4361ee', '#3a0ca3'],
+            rainbow: ['#ff2e63', '#ff9a00', '#ffea00', '#00ff88', '#00aaff', '#9d4edd']
+        };
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            initParticles();
+            initButtons();
+            initAudio();
+        };
+        
+        // 初始化粒子效果 - 增强背景粒子
+        function initParticles() {
+            particlesJS("particles-js", {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: ["#ff2e63", "#ff9a00", "#00aaff", "#00ff88"] },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.3, random: true },
+                    size: { value: 3, random: { enable: true, minimumValue: 1 } },
+                    line_linked: { 
+                        enable: true, 
+                        distance: 150, 
+                        color: "#ffffff", 
+                        opacity: 0.1, 
+                        width: 1 
+                    },
+                    move: { 
+                        enable: true, 
+                        speed: 1.5, 
+                        direction: "none", 
+                        random: true,
+                        out_mode: "out"
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: false }
+                    }
+                }
+            });
+        }
+        
+        // 初始化按钮事件
+        function initButtons() {
+            // 心形模式 - 在文字上方显示
+            document.getElementById('heartMode').onclick = function() {
+                createHeartFireworks(window.innerWidth/2, window.innerHeight/2, 'romantic');
+            };
+            
+            // 彩虹模式
+            document.getElementById('rainbowMode').onclick = function() {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const x = Math.random() * window.innerWidth;
+                        const y = Math.random() * window.innerHeight;
+                        createFirework(x, y, 'rainbow');
+                    }, i * 300);
+                }
+            };
+            
+            // 高级烟花 - 全屏烟花表演
+            document.getElementById('fireworksMode').onclick = function() {
+                createAdvancedFireworkShow();
+            };
+            
+            // 爱心烟花 - 在屏幕中央
+            document.getElementById('heartFireworks').onclick = function() {
+                createHeartShapedFirework(window.innerWidth/2, window.innerHeight/2);
+            };
+            
+            // 螺旋烟花
+            document.getElementById('spiralFireworks').onclick = function() {
+                createSpiralFirework(window.innerWidth/2, window.innerHeight/2);
+            };
+            
+            // 清空效果
+            document.getElementById('clearHearts').onclick = function() {
+                const particles = document.querySelectorAll('.firework-particle, .sparkle, .trail');
+                particles.forEach(p => p.remove());
+                heartCount = 0;
+                fireworksCount = 0;
+                updateCounters();
+            };
+            
+            // 点击屏幕任何位置创建烟花（包括文字区域）
+            document.addEventListener('click', function(e) {
+                // 排除按钮点击，因为按钮有自己的事件
+                if (!e.target.closest('.btn') && !e.target.closest('.music-btn')) {
+                    createMiniFirework(e.clientX, e.clientY);
+                }
+            });
+        }
+        
+        // 创建高级烟花表演 - 全屏效果
+        function createAdvancedFireworkShow() {
+            // 第一阶段：多个位置同时爆炸
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createRisingStar(x, window.innerHeight);
+                }, i * 200);
+            }
+            
+            // 第二阶段：心形烟花
+            setTimeout(() => {
+                createHeartShapedFirework(window.innerWidth/2, window.innerHeight/2);
+            }, 1200);
+            
+            // 第三阶段：螺旋烟花
+            setTimeout(() => {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const x = Math.random() * window.innerWidth;
+                        const y = Math.random() * window.innerHeight;
+                        createSpiralFirework(x, y);
+                    }, i * 500);
+                }
+            }, 2500);
+            
+            fireworksCount += 9;
+            updateCounters();
+        }
+        
+        // 创建上升的流星
+        function createRisingStar(x, startY) {
+            const star = document.createElement('div');
+            star.className = 'firework-particle';
+            star.style.left = x + 'px';
+            star.style.top = startY + 'px';
+            star.style.width = '6px';
+            star.style.height = '6px';
+            star.style.backgroundColor = '#ffffff';
+            star.style.borderRadius = '50%';
+            star.style.boxShadow = '0 0 25px #ffffff';
+            document.body.appendChild(star);
+            
+            // 创建尾迹
+            createTrail(x, startY, '#ffffff');
+            
+            // 上升动画
+            const targetY = Math.random() * window.innerHeight * 0.7;
+            const duration = 800 + Math.random() * 400;
+            
+            const rise = star.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(0, -${targetY}px) scale(1.5)`, opacity: 0.8 }
+            ], {
+                duration: duration,
+                easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)'
+            });
+            
+            rise.onfinish = () => {
+                // 爆炸效果
+                explodeFirework(x, startY - targetY, 'gold');
+                star.remove();
+            };
+        }
+        
+        // 创建尾迹效果
+        function createTrail(x, y, color) {
+            const trail = document.createElement('div');
+            trail.className = 'trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            trail.style.width = '3px';
+            trail.style.height = '3px';
+            trail.style.backgroundColor = color;
+            trail.style.borderRadius = '50%';
+            trail.style.opacity = '0.8';
+            document.body.appendChild(trail);
+            
+            trail.animate([
+                { transform: 'scale(1)', opacity: 0.8 },
+                { transform: 'scale(10)', opacity: 0 }
+            ], {
+                duration: 500,
+                easing: 'ease-out'
+            }).onfinish = () => trail.remove();
+        }
+        
+        // 爆炸烟花效果
+        function explodeFirework(x, y, colorType = 'romantic') {
+            const colors = fireworkColors[colorType] || fireworkColors.romantic;
+            const particleCount = 100 + Math.random() * 50;
+            
+            // 第一层爆炸：快速扩散
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 60 + Math.random() * 120;
+                    const size = 4 + Math.random() * 5;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const duration = 900 + Math.random() * 500;
+                    
+                    createFireworkParticle(x, y, angle, distance, size, color, duration, false);
+                }, Math.random() * 100);
+            }
+            
+            // 第二层爆炸：延迟的小火花
+            setTimeout(() => {
+                for (let i = 0; i < particleCount/2; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 40 + Math.random() * 80;
+                    const size = 3 + Math.random() * 4;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const duration = 700 + Math.random() * 400;
+                    
+                    createFireworkParticle(x, y, angle, distance, size, color, duration, true);
+                }
+            }, 200);
+            
+            // 闪光效果
+            createFlashEffect(x, y);
+        }
+        
+        // 创建烟花粒子
+        function createFireworkParticle(startX, startY, angle, distance, size, color, duration, isSparkle = false) {
+            const particle = document.createElement('div');
+            particle.className = isSparkle ? 'sparkle' : 'firework-particle';
+            particle.style.left = startX + 'px';
+            particle.style.top = startY + 'px';
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.backgroundColor = color;
+            particle.style.borderRadius = '50%';
+            particle.style.boxShadow = `0 0 ${size*3}px ${color}`;
+            
+            if (isSparkle) {
+                particle.style.animation = 'sparkle 0.5s infinite alternate';
+            }
+            
+            document.body.appendChild(particle);
+            
+            // 计算目标位置
+            const targetX = Math.cos(angle) * distance;
+            const targetY = Math.sin(angle) * distance;
+            
+            // 粒子动画
+            particle.animate([
+                { 
+                    transform: 'translate(0, 0) scale(1)',
+                    opacity: 1
+                },
+                { 
+                    transform: `translate(${targetX}px, ${targetY}px) scale(0.2)`,
+                    opacity: 0
+                }
+            ], {
+                duration: duration,
+                easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+            }).onfinish = () => particle.remove();
+            
+            // 闪烁效果
+            if (!isSparkle) {
+                particle.animate([
+                    { opacity: 1 },
+                    { opacity: 0.4 },
+                    { opacity: 1 }
+                ], {
+                    duration: 200,
+                    iterations: Math.floor(duration / 200)
+                });
+            }
+        }
+        
+        // 创建闪光效果
+        function createFlashEffect(x, y) {
+            const flash = document.createElement('div');
+            flash.className = 'firework-particle';
+            flash.style.left = x + 'px';
+            flash.style.top = y + 'px';
+            flash.style.width = '0px';
+            flash.style.height = '0px';
+            flash.style.borderRadius = '50%';
+            flash.style.backgroundColor = '#ffffff';
+            flash.style.boxShadow = '0 0 120px #ffffff';
+            document.body.appendChild(flash);
+            
+            flash.animate([
+                { transform: 'scale(0)', opacity: 0.9 },
+                { transform: 'scale(4)', opacity: 0 }
+            ], {
+                duration: 300,
+                easing: 'ease-out'
+            }).onfinish = () => flash.remove();
+        }
+        
+        // 创建心形烟花
+        function createHeartShapedFirework(x, y) {
+            const heartPoints = 80;
+            const size = 100;
+            
+            for (let i = 0; i < heartPoints; i++) {
+                const t = i / heartPoints * Math.PI * 2;
+                // 心形参数方程
+                const heartX = 16 * Math.pow(Math.sin(t), 3);
+                const heartY = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+                
+                const targetX = heartX * size / 16;
+                const targetY = -heartY * size / 16; // 反转Y轴
+                
+                setTimeout(() => {
+                    const angle = Math.atan2(targetY, targetX);
+                    const distance = Math.sqrt(targetX*targetX + targetY*targetY);
+                    const color = fireworkColors.romantic[Math.floor(Math.random() * fireworkColors.romantic.length)];
+                    
+                    createFireworkParticle(x, y, angle, distance, 4, color, 1500, true);
+                }, i * 10);
+            }
+            
+            // 中心爆炸
+            setTimeout(() => {
+                explodeFirework(x, y, 'romantic');
+            }, 800);
+        }
+        
+        // 创建螺旋烟花
+        function createSpiralFirework(x, y) {
+            const spirals = 3;
+            const particlesPerSpiral = 60;
+            
+            for (let s = 0; s < spirals; s++) {
+                for (let i = 0; i < particlesPerSpiral; i++) {
+                    setTimeout(() => {
+                        const angle = (i / particlesPerSpiral) * Math.PI * 4 + (s * Math.PI * 2 / spirals);
+                        const distance = 3 + (i / particlesPerSpiral) * 120;
+                        const color = fireworkColors.rainbow[s % fireworkColors.rainbow.length];
+                        
+                        createFireworkParticle(x, y, angle, distance, 3, color, 1800, true);
+                    }, s * 100 + i * 10);
+                }
+            }
+            
+            // 中心效果
+            setTimeout(() => {
+                explodeFirework(x, y, 'rainbow');
+            }, 600);
+        }
+        
+        // 创建爱心烟花（简化版）
+        function createHeartFireworks(x, y, colorType) {
+            const colors = fireworkColors[colorType] || fireworkColors.romantic;
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const offsetX = (Math.random() - 0.5) * 150;
+                    const offsetY = (Math.random() - 0.5) * 100;
+                    explodeFirework(x + offsetX, y + offsetY, colorType);
+                }, i * 200);
+            }
+            
+            fireworksCount += 5;
+            updateCounters();
+        }
+        
+        // 创建迷你烟花（点击时）
+        function createMiniFirework(x, y) {
+            const colors = fireworkColors.rainbow;
+            const particleCount = 25;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 25 + Math.random() * 50;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                createFireworkParticle(x, y, angle, distance, 3, color, 800, true);
+            }
+            
+            createFlashEffect(x, y);
+            heartCount++;
+            updateCounters();
+        }
+        
+        // 创建普通烟花
+        function createFirework(x, y, colorType) {
+            explodeFirework(x, y, colorType);
+            fireworksCount++;
+            updateCounters();
+        }
+        
+        // 更新计数器
+        function updateCounters() {
+            document.getElementById('heartCount').textContent = heartCount;
+            document.getElementById('fireworksCount').textContent = fireworksCount;
+        }
+        
+        // 初始化音频
+        function initAudio() {
+            audio = new Audio('https://assets.mixkit.co/music/preview/mixkit-romantic-sunset-687.mp3');
+            audio.loop = true;
+            audio.volume = 0.5;
+            
+            document.getElementById('playPause').onclick = function() {
+                if (isPlaying) {
+                    audio.pause();
+                    this.innerHTML = '<i class="fas fa-play"></i>';
+                } else {
+                    audio.play().catch(e => console.log("音频播放失败:", e));
+                    this.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+                isPlaying = !isPlaying;
+            };
+            
+            document.getElementById('muteBtn').onclick = function() {
+                if (isMuted) {
+                    audio.volume = 0.5;
+                    this.innerHTML = '<i class="fas fa-volume-up"></i>';
+                } else {
+                    audio.volume = 0;
+                    this.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                }
+                isMuted = !isMuted;
+            };
+            
+            // 用户首次交互时初始化音频
+            document.addEventListener('click', function initAudioOnInteraction() {
+                if (audio && !isPlaying) {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        document.getElementById('playPause').innerHTML = '<i class="fas fa-pause"></i>';
+                    }).catch(e => console.log("音频自动播放被阻止"));
+                }
+                document.removeEventListener('click', initAudioOnInteraction);
+            }, { once: true });
+        }
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% { transform: scale(1); opacity: 1; }
+                100% { transform: scale(1.5); opacity: 0.7; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
