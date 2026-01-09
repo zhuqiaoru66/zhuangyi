@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>致乖乖 - 爱的烟花</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== 基础重置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 14px;
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========== 加载动画 ========== */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #ff2e63;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loader-text {
+            font-size: 1.2rem;
+            color: #ffafcc;
+        }
+
+        /* ========== 主容器 - 手机比例优化 ========== */
+        .main-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            padding: 15px;
+            padding-top: 70px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        /* ========== 顶部标题栏 - 手机比例 ========== */
+        .header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(45deg, #ff2e63, #ff9a00);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text h1 {
+            font-size: 1.1rem;
+            background: linear-gradient(45deg, #ff2e63, #ff9a00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: #ffafcc;
+        }
+
+        .music-control {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        /* ========== 统计卡片 - 手机比例 ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-icon {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ff2e63;
+            margin: 3px 0;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #a0a0c0;
+        }
+
+        /* ========== 卡片通用样式 - 手机比例 ========== */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .card-header i {
+            font-size: 1.2rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* ========== 情书卡片 - 手机比例 ========== */
+        .love-letter .card-header i {
+            color: #ff2e63;
+        }
+
+        .letter-content {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #e0e0ff;
+            margin-bottom: 15px;
+        }
+
+        .letter-signature {
+            text-align: right;
+            font-style: italic;
+            color: #ffafcc;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        .message-input {
+            width: 100%;
+            min-height: 70px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            resize: none;
+        }
+
+        /* ========== 烟花控制 - 手机比例 ========== */
+        .control-section .card-header i {
+            color: #ff9a00;
+        }
+
+        .fireworks-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .firework-btn {
+            background: linear-gradient(135deg, rgba(255, 46, 99, 0.15), rgba(255, 154, 0, 0.15));
+            border: 1px solid rgba(255, 46, 99, 0.25);
+            border-radius: 8px;
+            padding: 12px 5px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .firework-btn i {
+            font-size: 1.4rem;
+        }
+
+        .firework-btn span {
+            font-size: 0.8rem;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .firework-btn.clear-btn {
+            background: linear-gradient(135deg, rgba(255, 59, 48, 0.15), rgba(255, 119, 48, 0.15));
+            border-color: rgba(255, 59, 48, 0.25);
+        }
+
+        /* ========== 游戏区域 - 手机比例 ========== */
+        .game-section .card-header i {
+            color: #00ff88;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .game-stat {
+            text-align: center;
+        }
+
+        .game-stat-label {
+            font-size: 0.8rem;
+            color: #a0a0c0;
+            margin-bottom: 3px;
+        }
+
+        .game-stat-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* ========== 设置面板 - 手机比例 ========== */
+        .settings-section .card-header i {
+            color: #9d4edd;
+        }
+
+        .settings-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .setting-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .setting-label i {
+            font-size: 1rem;
+            color: #9d4edd;
+        }
+
+        .slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .slider::-webkit-slider-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ff2e63;
+        }
+
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 11px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        input:checked + .toggle-slider {
+            background: #ff2e63;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(18px);
+        }
+
+        /* ========== 按钮样式 - 手机比例 ========== */
+        .primary-btn {
+            background: linear-gradient(135deg, #ff2e63, #ff6b9d);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            font-size: 0.95rem;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .game-btn {
+            background: linear-gradient(135deg, rgba(0, 168, 255, 0.15), rgba(0, 234, 255, 0.15));
+            border: 1px solid rgba(0, 168, 255, 0.25);
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        /* ========== 烟花画布 ========== */
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* ========== 成就通知 ========== */
+        .achievement-notification {
+            position: fixed;
+            top: 70px;
+            left: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.95), rgba(255, 165, 0, 0.95));
+            color: #333;
+            padding: 12px;
+            border-radius: 10px;
+            z-index: 1000;
+            transform: translateY(-100px);
+            transition: transform 0.4s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .achievement-notification.show {
+            transform: translateY(0);
+        }
+
+        .achievement-notification i {
+            font-size: 1.6rem;
+            color: #333;
+        }
+
+        .achievement-notification div {
+            flex: 1;
+        }
+
+        .achievement-notification strong {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.9rem;
+        }
+
+        .achievement-notification div div {
+            font-size: 0.85rem;
+        }
+
+        /* ========== 动画定义 ========== */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== 横屏适配 ========== */
+        @media (orientation: landscape) {
+            .main-container {
+                padding: 70px 15px 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .fireworks-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            #gameCanvas {
+                height: 120px;
+            }
+        }
+
+        /* ========== 大屏手机适配 ========== */
+        @media (min-width: 400px) {
+            html {
+                font-size: 15px;
+            }
+            
+            .main-container {
+                padding: 70px 20px 20px;
+            }
+            
+            .fireworks-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .firework-btn {
+                padding: 15px 8px;
+            }
+            
+            #gameCanvas {
+                height: 180px;
+            }
+        }
+
+        /* ========== 平板适配 ========== */
+        @media (min-width: 768px) {
+            .main-container {
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 80px 20px 20px;
+            }
+            
+            .fireworks-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            
+            .firework-btn {
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载器 -->
+    <div id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">准备浪漫烟火...</div>
+    </div>
+
+    <!-- 烟花画布 -->
+    <canvas id="fireworksCanvas"></canvas>
+
+    <!-- 主容器 -->
+    <div class="main-container" id="mainContainer">
+        <!-- 顶部标题栏 -->
+        <div class="header-bar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>致乖乖</h1>
+                    <p>庄依</p>
+                </div>
+            </div>
+            <button class="music-control" id="musicToggle">
+                <i class="fas fa-volume-up"></i>
+            </button>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card" id="heartStat">
+                <div class="stat-icon">
+                    <i class="fas fa-heart" style="color:#ff2e63;"></i>
+                </div>
+                <div class="stat-value" id="heartCount">0</div>
+                <div class="stat-label">爱心数</div>
+            </div>
+            <div class="stat-card" id="fireworkStat">
+                <div class="stat-icon">
+                    <i class="fas fa-fireworks" style="color:#ff9a00;"></i>
+                </div>
+                <div class="stat-value" id="fireworksCount">0</div>
+                <div class="stat-label">烟花数</div>
+            </div>
+            <div class="stat-card" id="gameStat">
+                <div class="stat-icon">
+                    <i class="fas fa-gamepad" style="color:#00ff88;"></i>
+                </div>
+                <div class="stat-value" id="gameScore">0</div>
+                <div class="stat-label">游戏分</div>
+            </div>
+        </div>
+
+        <!-- 情书卡片 -->
+        <div class="card love-letter">
+            <div class="card-header">
+                <i class="fas fa-envelope"></i>
+                <h2>致我最爱的乖乖</h2>
+            </div>
+            <div class="letter-content" id="messageText">
+                <p>亲爱的乖乖：</p>
+                <p>当烟花在夜空中绽放，每一道光芒都是我想你的瞬间。就像这精心设计的烟花效果，每一颗粒子都承载着我对你的思念，每一次爆炸都是心跳的旋律。</p>
+                <p>看那璀璨的烟火，它们在空中画出的轨迹，是我用代码为你写下的情书。红如我炽热的心，金如你灿烂的笑，蓝如我们深情的眼，绿如永恒的希望。</p>
+            </div>
+            <div class="letter-signature">—— 永远爱你的人</div>
+            
+            <textarea class="message-input" id="customMessage" placeholder="写下你的心里话..."></textarea>
+            <button class="primary-btn" id="updateMessage">
+                <i class="fas fa-paper-plane"></i>
+                更新情书
+            </button>
+        </div>
+
+        <!-- 烟花控制面板 -->
+        <div class="card control-section">
+            <div class="card-header">
+                <i class="fas fa-fireworks"></i>
+                <h2>烟花特效</h2>
+            </div>
+            <div class="fireworks-grid">
+                <button class="firework-btn" id="heartMode">
+                    <i class="fas fa-heart"></i>
+                    <span>心形</span>
+                </button>
+                <button class="firework-btn" id="rainbowMode">
+                    <i class="fas fa-rainbow"></i>
+                    <span>彩虹</span>
+                </button>
+                <button class="firework-btn" id="fireworksMode">
+                    <i class="fas fa-fire"></i>
+                    <span>表演</span>
+                </button>
+                <button class="firework-btn" id="loveRain">
+                    <i class="fas fa-cloud-rain"></i>
+                    <span>爱心雨</span>
+                </button>
+                <button class="firework-btn" id="spiralFireworks">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>螺旋</span>
+                </button>
+                <button class="firework-btn clear-btn" id="clearHearts">
+                    <i class="fas fa-trash"></i>
+                    <span>清空</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div class="card game-section">
+            <div class="card-header">
+                <i class="fas fa-gamepad"></i>
+                <h2>捕捉爱心</h2>
+            </div>
+            <div class="game-stats">
+                <div class="game-stat">
+                    <div class="game-stat-label">分数</div>
+                    <div class="game-stat-value" id="scoreValue">0</div>
+                </div>
+                <div class="game-stat">
+                    <div class="game-stat-label">时间</div>
+                    <div class="game-stat-value" id="timeValue">30</div>
+                </div>
+            </div>
+            
+            <canvas id="gameCanvas"></canvas>
+            
+            <button class="game-btn" id="startGame">
+                <i class="fas fa-play"></i>
+                <span>开始游戏</span>
+            </button>
+        </div>
+
+        <!-- 设置面板 -->
+        <div class="card settings-section">
+            <div class="card-header">
+                <i class="fas fa-cog"></i>
+                <h2>系统设置</h2>
+            </div>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-gauge-high"></i>
+                        <span>粒子密度</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="range" class="slider" id="particleDensity" min="10" max="100" value="40">
+                        <span id="densityValue" style="font-size: 0.9rem;">40</span>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-volume-high"></i>
+                        <span>背景音乐</span>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="musicToggle2" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-heart"></i>
+                        <span>漂浮爱心</span>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="floatHeartsToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-robot"></i>
+                        <span>自动烟花</span>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="autoFireworksToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成就通知容器 -->
+    <div id="achievementContainer"></div>
+
+    <script>
+        // ========== 应用状态 ==========
+        const AppState = {
+            heartCount: 0,
+            fireworksCount: 0,
+            gameScore: 0,
+            gameActive: false,
+            gameTime: 30,
+            gameTimer: null,
+            isMuted: false,
+            achievements: [],
+            autoFireworks: false,
+            floatingHearts: true,
+            particleDensity: 40,
+            vibrationEnabled: true
+        };
+
+        // ========== 全局变量 ==========
+        let fireworksSystem = null;
+        let gameHearts = [];
+        let gameCanvas, gameCtx;
+
+        // ========== 页面加载 ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成');
+            initApp();
+        });
+
+        // ========== 初始化应用 ==========
+        function initApp() {
+            try {
+                // 立即显示主界面
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('mainContainer').style.opacity = '1';
+                }, 1000);
+                
+                // 初始化UI和事件
+                initUI();
+                
+                // 初始化烟花系统
+                initFireworks();
+                
+                // 初始化游戏
+                initGame();
+                
+                // 解锁初始成就
+                setTimeout(() => {
+                    unlockAchievement('欢迎使用');
+                }, 1500);
+                
+                console.log('应用初始化完成');
+                
+            } catch (error) {
+                console.error('初始化失败:', error);
+                document.querySelector('.loader-text').textContent = '加载失败，请刷新';
+            }
+        }
+
+        // ========== 初始化UI ==========
+        function initUI() {
+            // 更新计数器
+            updateCounters();
+            
+            // 绑定事件
+            bindEvents();
+            
+            // 初始化设置
+            initSettings();
+        }
+
+        function bindEvents() {
+            // 烟花按钮
+            document.getElementById('heartMode').onclick = function() {
+                console.log('心形烟花点击');
+                createHeartFirework();
+            };
+            
+            document.getElementById('rainbowMode').onclick = function() {
+                console.log('彩虹烟花点击');
+                createRainbowFirework();
+            };
+            
+            document.getElementById('fireworksMode').onclick = function() {
+                console.log('烟花表演点击');
+                createFireworkShow();
+            };
+            
+            document.getElementById('loveRain').onclick = function() {
+                console.log('爱心雨点击');
+                createLoveRain();
+            };
+            
+            document.getElementById('spiralFireworks').onclick = function() {
+                console.log('螺旋烟花点击');
+                createSpiralFirework();
+            };
+            
+            document.getElementById('clearHearts').onclick = function() {
+                console.log('清空点击');
+                clearFireworks();
+            };
+            
+            // 游戏按钮
+            document.getElementById('startGame').onclick = function() {
+                console.log('开始游戏点击');
+                toggleGame();
+            };
+            
+            // 音乐控制
+            document.getElementById('musicToggle').onclick = function() {
+                console.log('音乐切换点击');
+                toggleMusic();
+            };
+            
+            document.getElementById('musicToggle2').onclick = function() {
+                console.log('音乐切换2点击');
+                toggleMusic();
+            };
+            
+            // 更新情书
+            document.getElementById('updateMessage').onclick = function() {
+                console.log('更新情书点击');
+                updateMessage();
+            };
+            
+            // 设置控件
+            document.getElementById('particleDensity').oninput = function() {
+                document.getElementById('densityValue').textContent = this.value;
+                AppState.particleDensity = parseInt(this.value);
+            };
+            
+            document.getElementById('autoFireworksToggle').onchange = function(e) {
+                AppState.autoFireworks = e.target.checked;
+                if (AppState.autoFireworks) startAutoFireworks();
+            };
+            
+            document.getElementById('floatHeartsToggle').onchange = function(e) {
+                AppState.floatingHearts = e.target.checked;
+            };
+        }
+
+        function initSettings() {
+            document.getElementById('musicToggle2').checked = !AppState.isMuted;
+            document.getElementById('floatHeartsToggle').checked = AppState.floatingHearts;
+            document.getElementById('autoFireworksToggle').checked = AppState.autoFireworks;
+            document.getElementById('densityValue').textContent = AppState.particleDensity;
+            document.getElementById('particleDensity').value = AppState.particleDensity;
+        }
+
+        // ========== 烟花系统 ==========
+        function initFireworks() {
+            console.log('初始化烟花系统');
+            const canvas = document.getElementById('fireworksCanvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            // 设置画布尺寸
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 粒子类
+            class Particle {
+                constructor(x, y, color, speed = 2) {
+                    this.x = x;
+                    this.y = y;
+                    this.color = color;
+                    this.angle = Math.random() * Math.PI * 2;
+                    this.speed = speed;
+                    this.vx = Math.cos(this.angle) * this.speed;
+                    this.vy = Math.sin(this.angle) * this.speed;
+                    this.radius = 1.5 + Math.random() * 2;
+                    this.alpha = 1;
+                    this.gravity = 0.03;
+                    this.decay = 0.01;
+                }
+                
+                update() {
+                    this.vx *= 0.99;
+                    this.vy *= 0.99;
+                    this.vy += this.gravity;
+                    
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    this.alpha -= this.decay;
+                    this.radius *= 0.995;
+                }
+                
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+                
+                isDead() {
+                    return this.alpha <= 0.1 || this.radius <= 0.5;
+                }
+            }
+            
+            // 动画循环
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const particle = particles[i];
+                    particle.update();
+                    particle.draw();
+                    
+                    if (particle.isDead()) {
+                        particles.splice(i, 1);
+                    }
+                }
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // 开始动画
+            animate();
+            
+            // 创建烟花系统
+            fireworksSystem = {
+                createFirework: function(x, y, color = '#ff2e63', count = 60) {
+                    for (let i = 0; i < count; i++) {
+                        const speed = 1.5 + Math.random() * 2;
+                        particles.push(new Particle(x, y, color, speed));
+                    }
+                    AppState.fireworksCount++;
+                    updateCounters();
+                },
+                createHeart: function(x, y) {
+                    const colors = ['#ff2e63', '#ff6b9d', '#ffafcc'];
+                    for (let i = 0; i < 80; i++) {
+                        const t = (i / 80) * Math.PI * 2;
+                        const px = 16 * Math.pow(Math.sin(t), 3);
+                        const py = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                        
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        particles.push(new Particle(
+                            x + px * 2,
+                            y + py * 2,
+                            color,
+                            0.3
+                        ));
+                    }
+                    AppState.fireworksCount++;
+                    updateCounters();
+                },
+                clear: function() {
+                    particles = [];
+                }
+            };
+            
+            // 点击页面创建烟花
+            document.addEventListener('click', function(e) {
+                if (e.target.tagName === 'BUTTON' || 
+                    e.target.closest('button') || 
+                    e.target.tagName === 'INPUT' ||
+                    e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                
+                fireworksSystem.createFirework(e.clientX, e.clientY);
+                AppState.heartCount++;
+                updateCounters();
+            });
+            
+            // 触摸事件
+            document.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                fireworksSystem.createFirework(touch.clientX, touch.clientY);
+                AppState.heartCount++;
+                updateCounters();
+            }, { passive: false });
+        }
+
+        // ========== 烟花特效函数 ==========
+        function createHeartFirework() {
+            const x = window.innerWidth / 2;
+            const y = window.innerHeight / 2;
+            fireworksSystem.createHeart(x, y);
+            unlockAchievement('心形烟花');
+        }
+
+        function createRainbowFirework() {
+            const x = window.innerWidth / 2;
+            const y = window.innerHeight / 2;
+            const colors = ['#ff2e63', '#ff9a00', '#ffea00', '#00ff88', '#00aaff'];
+            
+            colors.forEach((color, i) => {
+                setTimeout(() => {
+                    fireworksSystem.createFirework(x, y, color, 15);
+                }, i * 100);
+            });
+            
+            AppState.fireworksCount += colors.length - 1;
+            updateCounters();
+            unlockAchievement('彩虹烟花');
+        }
+
+        function createFireworkShow() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const x = 50 + Math.random() * (window.innerWidth - 100);
+                    const y = 100 + Math.random() * (window.innerHeight - 200);
+                    const colors = ['#ff2e63', '#ff9a00', '#00aaff'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    fireworksSystem.createFirework(x, y, color, 30);
+                }, i * 300);
+            }
+            AppState.fireworksCount += 4;
+            updateCounters();
+            unlockAchievement('烟花表演');
+        }
+
+        function createLoveRain() {
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    fireworksSystem.createFirework(x, -20, '#ff2e63', 10);
+                }, i * 100);
+            }
+            AppState.fireworksCount += 24;
+            updateCounters();
+            unlockAchievement('爱心雨');
+        }
+
+        function createSpiralFirework() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const angle = (i / 50) * Math.PI * 4;
+                    const distance = 30 * (i / 50);
+                    const x = centerX + Math.cos(angle) * distance;
+                    const y = centerY + Math.sin(angle) * distance;
+                    fireworksSystem.createFirework(x, y, '#ff9a8b', 8);
+                }, i * 30);
+            }
+            AppState.fireworksCount += 49;
+            updateCounters();
+            unlockAchievement('螺旋烟花');
+        }
+
+        function clearFireworks() {
+            fireworksSystem.clear();
+        }
+
+        // ========== 自动烟花 ==========
+        function startAutoFireworks() {
+            if (!AppState.autoFireworks) return;
+            
+            function createAutoFirework() {
+                if (!AppState.autoFireworks) return;
+                
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const colors = ['#ff2e63', '#ff9a00', '#00aaff'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                fireworksSystem.createFirework(x, y, color, 20);
+                
+                setTimeout(createAutoFirework, 2500 + Math.random() * 2500);
+            }
+            
+            createAutoFirework();
+            unlockAchievement('自动烟花');
+        }
+
+        // ========== 游戏系统 ==========
+        function initGame() {
+            gameCanvas = document.getElementById('gameCanvas');
+            gameCtx = gameCanvas.getContext('2d');
+            
+            // 设置画布尺寸
+            function resizeGameCanvas() {
+                gameCanvas.width = gameCanvas.offsetWidth;
+                gameCanvas.height = gameCanvas.offsetHeight;
+            }
+            
+            resizeGameCanvas();
+            window.addEventListener('resize', resizeGameCanvas);
+            
+            // 创建游戏爱心
+            for (let i = 0; i < 6; i++) {
+                gameHearts.push(createGameHeart());
+            }
+            
+            // 游戏循环
+            function gameLoop() {
+                gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+                
+                gameHearts.forEach(heart => {
+                    heart.x += heart.speedX;
+                    heart.y += heart.speedY;
+                    heart.rotation += 0.05;
+                    
+                    if (heart.x < heart.radius || heart.x > gameCanvas.width - heart.radius) {
+                        heart.speedX *= -1;
+                    }
+                    if (heart.y < heart.radius || heart.y > gameCanvas.height - heart.radius) {
+                        heart.speedY *= -1;
+                    }
+                    
+                    drawHeart(gameCtx, heart.x, heart.y, heart.radius * 2, heart.color, heart.rotation);
+                });
+                
+                requestAnimationFrame(gameLoop);
+            }
+            
+            // 开始游戏循环
+            gameLoop();
+            
+            // 游戏点击事件
+            gameCanvas.onclick = function(e) {
+                if (!AppState.gameActive) return;
+                
+                const rect = gameCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                for (let i = gameHearts.length - 1; i >= 0; i--) {
+                    const heart = gameHearts[i];
+                    const distance = Math.sqrt(
+                        Math.pow(x - heart.x, 2) + Math.pow(y - heart.y, 2)
+                    );
+                    
+                    if (distance < heart.radius) {
+                        AppState.gameScore += 10;
+                        updateCounters();
+                        
+                        const screenX = rect.left + heart.x;
+                        const screenY = rect.top + heart.y;
+                        fireworksSystem.createFirework(screenX, screenY, '#ffd700');
+                        
+                        gameHearts.splice(i, 1);
+                        gameHearts.push(createGameHeart());
+                        
+                        document.getElementById('scoreValue').textContent = AppState.gameScore;
+                        
+                        if (AppState.gameScore >= 100) unlockAchievement('游戏高手');
+                        if (AppState.gameScore >= 300) unlockAchievement('爱心捕手');
+                        
+                        break;
+                    }
+                }
+            };
+        }
+
+        function createGameHeart() {
+            return {
+                x: Math.random() * gameCanvas.width,
+                y: Math.random() * gameCanvas.height,
+                radius: 15 + Math.random() * 10,
+                color: ['#ff2e63', '#ff9a00', '#00ff88'][Math.floor(Math.random() * 3)],
+                speedX: (Math.random() - 0.5) * 2,
+                speedY: (Math.random() - 0.5) * 2,
+                rotation: 0
+            };
+        }
+
+        function drawHeart(ctx, x, y, size, color, rotation) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            
+            ctx.fillStyle = color;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 10;
+            
+            ctx.beginPath();
+            for (let i = 0; i < 30; i++) {
+                const t = (i / 30) * Math.PI * 2;
+                const px = 16 * Math.pow(Math.sin(t), 3);
+                const py = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                
+                const scaledX = px * (size / 50);
+                const scaledY = py * (size / 50);
+                
+                if (i === 0) {
+                    ctx.moveTo(scaledX, scaledY);
+                } else {
+                    ctx.lineTo(scaledX, scaledY);
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function toggleGame() {
+            const gameBtn = document.getElementById('startGame');
+            
+            if (AppState.gameActive) {
+                AppState.gameActive = false;
+                clearInterval(AppState.gameTimer);
+                AppState.gameTime = 30;
+                AppState.gameScore = 0;
+                
+                document.getElementById('scoreValue').textContent = '0';
+                document.getElementById('timeValue').textContent = '30';
+                gameBtn.innerHTML = '<i class="fas fa-play"></i><span>开始游戏</span>';
+                
+            } else {
+                AppState.gameActive = true;
+                AppState.gameScore = 0;
+                AppState.gameTime = 30;
+                
+                document.getElementById('scoreValue').textContent = '0';
+                document.getElementById('timeValue').textContent = '30';
+                gameBtn.innerHTML = '<i class="fas fa-stop"></i><span>停止游戏</span>';
+                
+                AppState.gameTimer = setInterval(() => {
+                    AppState.gameTime--;
+                    document.getElementById('timeValue').textContent = AppState.gameTime;
+                    
+                    if (AppState.gameTime <= 0) {
+                        toggleGame();
+                        setTimeout(() => {
+                            alert(`游戏结束！得分：${AppState.gameScore}`);
+                        }, 500);
+                    }
+                }, 1000);
+                
+                unlockAchievement('游戏开始');
+            }
+        }
+
+        // ========== 辅助函数 ==========
+        function updateCounters() {
+            document.getElementById('heartCount').textContent = AppState.heartCount;
+            document.getElementById('fireworksCount').textContent = AppState.fireworksCount;
+            document.getElementById('gameScore').textContent = AppState.gameScore;
+        }
+
+        function toggleMusic() {
+            const musicToggle = document.getElementById('musicToggle');
+            const musicToggle2 = document.getElementById('musicToggle2');
+            
+            AppState.isMuted = !AppState.isMuted;
+            
+            if (AppState.isMuted) {
+                musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                musicToggle2.checked = false;
+            } else {
+                musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+                musicToggle2.checked = true;
+            }
+        }
+
+        function updateMessage() {
+            const message = document.getElementById('customMessage').value;
+            if (message.trim()) {
+                document.getElementById('messageText').innerHTML = 
+                    `<p>${message.replace(/\n/g, '</p><p>')}</p>`;
+                unlockAchievement('情书作家');
+            }
+        }
+
+        function unlockAchievement(name) {
+            if (AppState.achievements.includes(name)) return;
+            
+            AppState.achievements.push(name);
+            showAchievementNotification(name);
+            
+            localStorage.setItem('fireworksAchievements', JSON.stringify(AppState.achievements));
+        }
+
+        function showAchievementNotification(name) {
+            const container = document.getElementById('achievementContainer');
+            
+            const notification = document.createElement('div');
+            notification.className = 'achievement-notification';
+            notification.innerHTML = `
+                <i class="fas fa-trophy"></i>
+                <div>
+                    <strong>成就解锁！</strong>
+                    <div>${name}</div>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
